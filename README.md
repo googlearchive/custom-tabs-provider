@@ -4,15 +4,19 @@ Android Custom Tabs Browser
 This sample shows how browser vendors can support the 
 [custom tabs](https://developer.chrome.com/multidevice/android/customtabs) protocol.
 
+How to implement a Custom Tab Provider?
+---------------------------------------
+
+There are two steps required for browsers to implement the custom tabs protocol:
+
+1. Handle the [custom tab intent](https://github.com/GoogleChrome/custom-tabs-client/blob/master/customtabs/src/android/support/customtabs/CustomTabsIntent.java): [CustomTabController](app/src/main/java/com/example/android/customtabsbrowser/CustomTabController.java) demonstrates how to extract configurations options from the custom tab intent. CustomTabController does not depend on a concrete browser implementation and can easily be reused in other projects.
+2. Provide a [CustomTabsService](http://developer.android.com/reference/android/support/customtabs/CustomTabsService.html): see [MyCustomTabsService](app/src/main/java/com/example/android/customtabsbrowser/MyCustomTabsService.java) for a dummy implementation. Browsers should make sure to implement `CustomTabsServicer#warumUp()` and prefetching via `CustomTabsServicer#mayLaunchUrl(...)`.
+
 Pre-requisites
 --------------
 
 - Android SDK v15
-
-Getting Started
----------------
-
-This sample uses the Gradle build system. To build this project, use the
+- This sample uses the Gradle build system. To build this project, use the
 "gradlew build" command or use "Import Project" in Android Studio.
 
 License
