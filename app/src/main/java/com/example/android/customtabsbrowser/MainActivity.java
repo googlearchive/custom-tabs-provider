@@ -1,16 +1,18 @@
-// Copyright 2015 Google Inc. All Rights Reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+/*
+ * Copyright (C) 2015 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.example.android.customtabsbrowser;
 
 import android.content.Intent;
@@ -30,6 +32,9 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+/**
+ * This activity implements a custom tab provider using a Webview.
+ */
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
@@ -74,13 +79,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (mCustomTabController.launch()) {
-            return;
+        if (mCustomTabController.hasCustomTabIntent()) {
+            mCustomTabController.launch();
         } else {
-            Toast.makeText(this,
-                    "This is not the Custom Tab you are looking for.",
-                    Toast.LENGTH_LONG)
-                    .show();
+            Toast.makeText(this, R.string.error_no_custom_tab, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -102,14 +104,16 @@ public class MainActivity extends AppCompatActivity {
         if (mCustomTabController.onOptionsItemSelected(item)) {
             return true;
         }
-        switch (item.getItemId()) {
-            case R.id.action_open_in_browser:
-                startActivity(new Intent(Intent.ACTION_VIEW, getIntent().getData()));
-                return true;
+        if (R.id.action_open_in_browser == item.getItemId()) {
+            startActivity(new Intent(Intent.ACTION_VIEW, getIntent().getData()));
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Configures our webview-based browser tab based on the custom tab intent.
+     */
     private class CustomTabControllerCallback implements CustomTabController.Callback {
         @Override
         public void setTitle(String title) {

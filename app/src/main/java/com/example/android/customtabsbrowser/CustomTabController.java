@@ -1,16 +1,18 @@
-// Copyright 2015 Google Inc. All Rights Reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+/*
+ * Copyright (C) 2015 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.example.android.customtabsbrowser;
 
 import android.app.Activity;
@@ -48,7 +50,7 @@ import static android.support.customtabs.CustomTabsIntent.NO_TITLE;
 /**
  * Configures a custom tab. Extracts all configuration parameters from the activity's intent.
  * Clients need to provide a
- * {@link com.example.android.customtabsbrowser.CustomTabController.Callback} to handle different
+ * {@link Callback} to handle different
  * configuration parameters.
  * <p/>
  * To properly support a custom tab lifecycle, clients need to:
@@ -63,8 +65,9 @@ import static android.support.customtabs.CustomTabsIntent.NO_TITLE;
  *   @Override
  *   protected void onStart() {
  *     super.onStart();
- *     if (mCustomTabsController.launch()) {
+ *     if (mCustomTabController.hasCustomTabIntent()) {
  *       // we launch a custom tab
+ *       mCustomTabController.launch();
  *     } else {
  *       // we launch the browser
  *     }
@@ -170,22 +173,16 @@ public class CustomTabController {
 
     /**
      * Launches the custom tab. Should be called from {@link Activity#onStart()}
-     *
-     * @return if we launched a custom tab
      */
-    public boolean launch() {
-        if (!isCustomTab()) {
-            return false;
+    public void launch() {
+        if (!hasCustomTabIntent()) {
+            return;
         }
         String url = mActivity.getIntent().getDataString();
-        if (url == null) {
-            return false;
-        }
         mCallback.setUrl(url);
         updateToolbarColor();
         updateBackButtonIcon();
         updateToolbarAction();
-        return true;
     }
 
     /**
@@ -220,7 +217,7 @@ public class CustomTabController {
      * {@link Activity#onCreateOptionsMenu(Menu)}.
      */
     public void updateMenu(Menu menu) {
-        if (!isCustomTab()) {
+        if (!hasCustomTabIntent()) {
             return;
         }
         List<Bundle> menuBundles = mActivity.getIntent()
@@ -245,17 +242,25 @@ public class CustomTabController {
      * {@link Activity#onOptionsItemSelected(MenuItem)}.
      */
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
+        if (android.R.id.home == item.getItemId()) {
+            mActivity.finish();
+            return true;
         }
         return false;
     }
 
-    private boolean isCustomTab() {
+    /**
+     * Returns true if the activity was started with a valid custom tab intent.
+     */
+    public boolean hasCustomTabIntent() {
         Bundle extras = mActivity.getIntent().getExtras();
-        return extras != null && extras.containsKey(EXTRA_SESSION);
+        if (extras == null) {
+            return false;
+        }
+        if (!extras.containsKey(EXTRA_SESSION)) {
+            return false;
+        }
+        return mActivity.getIntent().getDataString() != null;
     }
 
     private void updateToolbarAction() {
