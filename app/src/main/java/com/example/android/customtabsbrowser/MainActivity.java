@@ -88,8 +88,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void finish() {
-        super.finish();
         mCustomTabController.finish();
+        super.finish();
     }
 
     @Override
