@@ -12,7 +12,7 @@ How to implement a Custom Tab Provider?
 There are two steps required for browsers to implement the custom tabs protocol:
 
 1. Handle the [custom tab intent](https://github.com/GoogleChrome/custom-tabs-client/blob/master/customtabs/src/android/support/customtabs/CustomTabsIntent.java): [CustomTabController](app/src/main/java/com/example/android/customtabsbrowser/CustomTabController.java) demonstrates how to extract configurations options from the custom tab intent. CustomTabController does not depend on a concrete browser implementation and can easily be reused in other projects.
-2. Provide a [CustomTabsService](http://developer.android.com/reference/android/support/customtabs/CustomTabsService.html): see [MyCustomTabsService](app/src/main/java/com/example/android/customtabsbrowser/MyCustomTabsService.java) for a dummy implementation. Browsers should make sure to implement `CustomTabsServicer#warumUp()` and prefetching via `CustomTabsServicer#mayLaunchUrl(...)`.
+2. Provide a [CustomTabsService](http://developer.android.com/reference/android/support/customtabs/CustomTabsService.html): see [MyCustomTabsService](app/src/main/java/com/example/android/customtabsbrowser/MyCustomTabsService.java) for a dummy implementation. Browsers should make sure to implement `CustomTabsServicer#warmUp()` and prefetching via `CustomTabsServicer#mayLaunchUrl(...)`.
 
 Testing
 ---------------------------------------
